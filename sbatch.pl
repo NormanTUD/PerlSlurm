@@ -590,9 +590,11 @@ sub get_working_directory {
 	debug_sub "get_working_directory()";
 	my $cwd = '';
 	if(exists $ENV{SLURM_JOB_ID}) {
-		my $command = qq#scontrol show job $ENV{SLURM_JOB_ID} | egrep "^\\s*WorkDir=" | sed -e 's/^\\s*WorkDir=//'#;
-		$cwd = debug_qx($command);
-		chomp $cwd;
+		if(program_installed("scontrol")) {
+			my $command = qq#scontrol show job $ENV{SLURM_JOB_ID} | egrep "^\\s*WorkDir=" | sed -e 's/^\\s*WorkDir=//'#;
+			$cwd = debug_qx($command);
+			chomp $cwd;
+		}
 	} else {
 		debug "Calling getcwd()";
 		$cwd = getcwd();
@@ -603,7 +605,7 @@ sub get_working_directory {
 	}
 
 	if(!-d $cwd) {
-		error "WARNING: $cwd could not be found!!!";
+		error "WARNING: cwd could not be found!!!";
 	}
 
 	return $cwd;
