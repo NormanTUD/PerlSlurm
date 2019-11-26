@@ -17,3 +17,12 @@ It also allows the following:
 
 in non-bash-scripts like this perl-script? It works exactly the same way. Slurm does not care about the interpreter, 
 it only reads the file as text-file and searches for /^#SBATCH (.\*)/.
+
+This way, 120 seconds before the slurm-time-limit ends, the process gets a USR1-signal and may respond to it
+appropriately (e.g. by shutting down a database properly instead of just killing it). 
+
+# Just run...
+
+> sbatch --sbatch-options=here sbatch.pl --debug
+
+(for example, you might add other options).
