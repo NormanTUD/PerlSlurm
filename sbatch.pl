@@ -49,14 +49,15 @@ sub shutdown_script () {
 	# Fill me with useful stuff that get's done once the job ends or is cancelled by anything not SIGKILL
 }
 
+# Add default values here so that they get used when none are specified
 my %default_values = (
         number_of_allocated_gpus => 0,
         sleep_nvidia_smi => 30,
         sleep_db_up => 30
 );
+lock_keys(%default_values); # Lock keys so you don't do any typos later on
 
-lock_keys(%default_values);
-
+# Add options you want to your script here and in the analyze_args()-function.
 my %options = (
         debug => 0,
         slurmid => $ENV{SLURM_JOB_ID},
@@ -71,7 +72,6 @@ my %options = (
         sleep_nvidia_smi => $default_values{sleep_nvidia_smi},
         sleep_db_up => $default_values{sleep_db_up}
 );
-
 lock_keys(%options);
 
 my %script_paths = (
@@ -91,9 +91,11 @@ END {
         shutdown_script();
 }
 
+# Set up a signal handler for shutdown_script();
 $SIG{USR1} = \&usr1_signal;
 main();
 
+# Run your main program here
 sub main {
         debug_sub 'main()';
 
@@ -371,6 +373,7 @@ sub _get_gpu_info {
 }
 
 # Get some information about the loaded environment, e.g. the number of allocated GPUs per Node.
+# Add more information here if you need to.
 sub get_environment_variables {
         debug_sub 'get_environment_variables()';
 
